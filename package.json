@@ -1,0 +1,31 @@
+{
+  "name": "visualizer-micro",
+  "version": "0.0.1",
+  "description": "A JS micro library that simplifies getting spectrum and waveform data from an audio source using the HTML5 Web Audio API.",
+  "main": "dist/visualizer-micro.min.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "browserify -t uglifyify visualizer-micro.js -s VisualizerMicro > dist/visualizer-micro.min.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/likethemammal/visualizer-micro.git"
+  },
+  "keywords": [
+    "visualizer",
+    "audio visualizer",
+    "html5 visualizer",
+    "web audio api",
+    "micro"
+  ],
+  "author": "Chris Dolphin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/likethemammal/visualizer-micro/issues"
+  },
+  "homepage": "https://github.com/likethemammal/visualizer-micro",
+  "devDependencies": {
+    "browserify": "^10.2.4",
+    "uglifyify": "^3.0.1"
+  }
+}

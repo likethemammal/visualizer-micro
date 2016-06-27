@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>VisualizerMicro - Example usage page</title>
+
+    <style>
+
+        #visualizer {
+            height: 300px;
+        }
+
+        .visualizer-node {
+            position: relative;
+            width: 1px;
+            background: blue;
+        }
+
+    </style>
+</head>
+<body>
+
+<h1>VisualizerMicro Example</h1>
+
+<p>This page is a basic implementation of the visualizer-micro library.</p>
+
+<p><a target="_blank" href="https://github.com/likethemammal/visualizer-micro/blob/master/example.html">View the source</a> to see how things are implemented.</p>
+
+<hr />
+
+<div id="supported"></div>
+
+<button id="switch">Spectrum</button>
+
+<audio id="audio" src="https://audio-file-sample.mp3"></audio>
+
+<div id="visualizer"></div>
+
+<script src="dist/visualizer-micro.min.js"></script>
+
+<script>
+    (function() {
+
+        var vm = new VisualizerMicro();
+        var supportedEl = document.getElementById('supported');
+        var audioEl = document.getElementById('audio');
+        var switchEl = document.getElementById('switch');
+        var visualizerEl = document.getElementById('visualizer');
+        var spectrumText = 'Spectrum';
+        var waveformText = 'Waveform';
+        var defaultVisualizerType = 'spectrum';
+        var currentVisualizerType = defaultVisualizerType;
+        var visualizerHeight = visualizerEl.clientHeight;
+        var vizNodes = [];
+
+        //setup switch button
+        switchEl.onclick = function() {
+            if (currentVisualizerType === defaultVisualizerType) {
+                currentVisualizerType = 'waveform';
+                switchEl.innerHTML = waveformText;
+            } else {
+                currentVisualizerType = defaultVisualizerType;
+                switchEl.innerHTML = spectrumText;
+            }
+        };
+
+        if (vm.isSupported()) {
+            supportedEl.innerHTML = 'This browser supports visualizing audio data';
+            supportedEl.style.color = 'green';
+
+            //setup audio data retrieval and animation loop
+            setInterval(function () {
+                if (!audioEl.paused) {
+                    var audioData;
+                    var audioDataLength;
+                    var node;
+
+                    if (currentVisualizerType === defaultVisualizerType) {
+                        audioData = vm.getSpectrum();
+                    } else {
+                        audioData = vm.getWaveform();
+                    }
+
+                    audioDataLength = audioData.length;
+
+                    //create visualizer nodes
+                    if (!vizNodes.length) {
+                        for (var i = 0; i < audioDataLength; i++) {
+                            node = document.createElement('div');
+
+                            node.className = 'visualizer-node';
+                            node.style.left = i;
+
+                            vizNodes.push(node);
+                            visualizerEl.appendChild(node);
+                        }
+                    }
+
+                    //parse audio data and change node heights
+                    for (var j = 0; j < audioDataLength; j++) {
+                        node = vizNodes[j];
+
+                        node.style.height = audioData[j] * visualizerHeight;
+                    }
+                }
+            }, 50);
+        } else {
+            supportedEl.innerHTML = 'This browser doesn\'t support visualizing audio data';
+            supportedEl.style.color = 'red';
+        }
+
+        //Post comments
+
+            //move paused state from touching the dom
+
+    })();
+</script>
+</body>
+</html>
