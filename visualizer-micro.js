@@ -1,131 +1,159 @@
-var AudioContext = window.AudioContext || window.webkitAudioContext;
+(function () {
+    var AudioContext = window.AudioContext || window.webkitAudioContext;
+    var VisualizerMicro,
+        _warnNotSupported,
+        _onLoad,
+        load,
+        unload,
+        isSupported,
+        getSpectrum,
+        getWaveform,
+        setVolumeModifier,
+        logPrefix = 'Visualizer-Micro: ',
+        loadEventString = 'canplaythrough',
+        prototype;
 
-var alreadyLoaded = false;
-var context;
-var analyser;
-var binCount;
-var dataArray;
-var audioSource;
-var loadEventListenerCreated;
+    VisualizerMicro = function () {
+        if (!isSupported()) {
+            _warnNotSupported();
+            return;
+        }
 
-var isSupported = function () {
-    return !!AudioContext;
-};
+        this.alreadyLoaded = false;
+        this.context = new AudioContext();
+        this.analyser = this.context.createAnalyser();
+        this.binCount = false;
+        this.loadEventListenerCreated = false;
+        this.audioSource = false;
+        this.dataArray = [];
+        this.volumeModifier = 1;
+    };
 
-var _warnNotSupported = function () {
-    //error: audio visualization is not supported in this browser
-};
+    _warnNotSupported = function () {
+        console.warn(logPrefix + 'Audio visualization is not supported in this browser');
+    };
 
-var setVolumeModifier = function (volume) {
-    volumeModifier = (1 / volume);
-};
+    _onLoad = function () {
 
+        if (this.alreadyLoaded) {
+            return;
+        }
 
-var VisualizerMicro = function () {
+        var source = this.context.createMediaElementSource(this.audioSource);
 
-    if (!isSupported()) {
-        _warnNotSupported();
-        return;
-    }
+        source.connect(this.analyser);
+        this.analyser.connect(this.context.destination);
 
-    context = new AudioContext();
-    analyser = context.createAnalyser();
-};
+        this.binCount = this.analyser.frequencyBinCount;
+        this.dataArray = new Uint8Array(this.binCount);
 
-var getSpectrum = function () {
+        setVolumeModifier(this.audioSource.volume);
 
-    if (!isSupported()) {
-        _warnNotSupported();
-        return;
-    }
+        this.alreadyLoaded = true;
 
-    var spectrum = [];
-    var spectrumLength = dataArray.length;
-    var value;
+    };
 
-    analyser.getByteFrequencyData(dataArray);
+    load = function (audio) {
 
-    for (var i = 0; i < spectrumLength; i++) {
-        value = dataArray[i];
+        if (!isSupported()) {
+            _warnNotSupported();
+            return;
+        }
 
-        value = (value / volumeModifier) / (binCount * 4);
+        if (this.audioSource === audio) {
+            console.log(logPrefix + 'This audio source has already been loaded, no need to call load() with it again.');
+            return;
+        }
 
-        spectrum.push(value);
-    }
+        if (this.loadEventListenerCreated && this.alreadyLoaded) {
+            //remove old audio source so new one can be attached
+            unload();
+        }
 
-    return spectrum;
-};
+        this.audioSource = audio;
+        this.loadEventListenerCreated = true;
+        this.audioSource.addEventListener(loadEventString, _onLoad)
+    };
 
-var getWaveform = function () {
+    unload = function () {
 
-    if (!isSupported()) {
-        _warnNotSupported();
-        return;
-    }
+        if (!this.audioSource) {
+            console.log(logPrefix + "Audio source doesn't exist. This may mean it was destoryed prematurely and could cause a memory leak.");
+        } else {
+            this.audioSource.removeEventListener(loadEventString, _onLoad);
+        }
 
-    var spectrum = [];
-    var waveformLength = dataArray.length;
-    var value;
+        this.alreadyLoaded = false;
+        this.loadEventListenerCreated = false;
+    };
 
-    analyser.getByteTimeDomainData(dataArray);
+    isSupported = function () {
+        return !!AudioContext;
+    };
 
-    for (var i = 0; i < waveformLength; i++) {
-        value = dataArray[i];
+    getSpectrum = function () {
 
-        value = value - 128;
-        value = value / 128;
+        if (!isSupported()) {
+            _warnNotSupported();
+            return;
+        }
 
-        spectrum.push(value);
-    }
+        var spectrum = [];
+        var spectrumLength = this.dataArray.length;
+        var value;
 
-    return spectrum;
+        this.analyser.getByteFrequencyData(this.dataArray);
 
-};
+        for (var i = 0; i < spectrumLength; i++) {
+            value = this.dataArray[i];
 
-var _onLoad = function () {
+            value = (value / this.volumeModifier) / (this.binCount * 4);
 
-    if (alreadyLoaded) {
-        return;
-    }
+            spectrum.push(value);
+        }
 
-    var source = context.createMediaElementSource(audioSource);
+        return spectrum;
+    };
 
-    source.connect(analyser);
-    analyser.connect(context.destination);
+    getWaveform = function () {
+
+        if (!isSupported()) {
+            _warnNotSupported();
+            return;
+        }
+
+        var spectrum = [];
+        var waveformLength = this.dataArray.length;
+        var value;
+
+        this.analyser.getByteTimeDomainData(this.dataArray);
+
+        for (var i = 0; i < waveformLength; i++) {
+            value = this.dataArray[i];
+
+            value = value - 128;
+            value = value / 128;
+
+            spectrum.push(value);
+        }
+
+        return spectrum;
+
+    };
     
-    binCount = analyser.frequencyBinCount;
-    dataArray = new Uint8Array(binCount);
-
-    setVolumeModifier(audioSource.volume);
-
-    alreadyLoaded = true;
-
-};
-
-var load = function (audio) {
-
-    if (!isSupported()) {
-        _warnNotSupported();
-        return;
-    }
-
-    if (audioSource === audio) {
-        //warn: this audio source has already be loaded, no need to call load with it again
-    }
-
-    if (loadEventListenerCreated) {
-        unload();
-    }
+    setVolumeModifier = function (volume) {
+        this.volumeModifier = (1 / volume);
+    };
     
-    audioSource = audio;
-    loadEventListenerCreated = true;
-    audioSource.addEventListener('canplaythrough', _onLoad)
-};
+    //set to prototype
+    prototype = VisualizerMicro.prototype;
+    prototype.load = load;
+    prototype.unload = unload;
+    prototype.isSupported = isSupported;
+    prototype.getSpectrum = getSpectrum;
+    prototype.getWaveform = getWaveform;
+    prototype.setVolumeModifier = setVolumeModifier;
 
-var unload = function () {
-    audioSource.removeEventListener('canplaythrough', _onLoad);
-    alreadyLoaded = false;
-    loadEventListenerCreated = false;
-};
+    module.exports = VisualizerMicro;
 
-module.exports = VisualizerMicro;
+})();
