@@ -55,18 +55,20 @@ if (vm.isSupported()) {
 
 The library needs a source to retrieve audio data from. This can be an `<audio>` element **or** an instance of the HTML5 `Audio()` class.
 
+The 2nd parameter expected is a callback, to be called after the audio source has been loaded 
+
 ```js
 //audio element
 var audioEl = document.getElementById('some-audio-el');
 
-vm.load(audioEl);
+vm.load(audioEl, onLoad);
 ```
 
 ```js
 //Audio class
 var audio = new Audio();
 
-vm.load(audio);
+vm.load(audio, onLoad);
 
 ```
 

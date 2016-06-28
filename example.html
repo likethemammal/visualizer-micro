@@ -8,10 +8,12 @@
 
         #visualizer {
             height: 300px;
+            position: relative;
         }
 
         .visualizer-node {
-            position: relative;
+            position: absolute;
+            bottom: 0;
             width: 1px;
             background: blue;
         }
@@ -30,13 +32,20 @@
 
 <div id="supported"></div>
 
-<button id="switch">Spectrum</button>
+<p>
+    <button id="switch" disabled>Spectrum</button>
+</p>
 
-<audio id="audio" src="https://audio-file-sample.mp3"></audio>
+<p>
+    <audio id="audio" src="sample.mp3" controls autoplay></audio>
+</p>
 
+<p>
+    <a href="https://soundcloud.com/musisikamar-1/crimsound-bang">CRIMSOUND - BANG !!</a>
+</p>
 <div id="visualizer"></div>
 
-<script src="dist/visualizer-micro.min.js"></script>
+<script src="dist/visualizer-micro.js"></script>
 
 <script>
     (function() {
@@ -67,52 +76,53 @@
         if (vm.isSupported()) {
             supportedEl.innerHTML = 'This browser supports visualizing audio data';
             supportedEl.style.color = 'green';
+            switchEl.disabled = false;
 
-            //setup audio data retrieval and animation loop
-            setInterval(function () {
-                if (!audioEl.paused) {
-                    var audioData;
-                    var audioDataLength;
-                    var node;
+            vm.load(audioEl, function() {
+                //setup audio data retrieval and animation loop
+                setInterval(function () {
+                    if (!audioEl.paused) {
+                        var audioData;
+                        var audioDataLength;
+                        var node;
+                        var isSpectrum = currentVisualizerType === defaultVisualizerType;
+                        var modifier = isSpectrum ? 16 : 1;
 
-                    if (currentVisualizerType === defaultVisualizerType) {
-                        audioData = vm.getSpectrum();
-                    } else {
-                        audioData = vm.getWaveform();
-                    }
+                        if (isSpectrum) {
+                            audioData = vm.getSpectrum();
+                        } else {
+                            audioData = vm.getWaveform();
+                        }
 
-                    audioDataLength = audioData.length;
+                        audioDataLength = audioData.length;
 
-                    //create visualizer nodes
-                    if (!vizNodes.length) {
-                        for (var i = 0; i < audioDataLength; i++) {
-                            node = document.createElement('div');
+                        //create visualizer nodes
+                        if (!vizNodes.length) {
+                            for (var i = 0; i < audioDataLength; i++) {
+                                node = document.createElement('div');
 
-                            node.className = 'visualizer-node';
-                            node.style.left = i;
+                                node.className = 'visualizer-node';
+                                node.style.left = i + 'px';
 
-                            vizNodes.push(node);
-                            visualizerEl.appendChild(node);
+                                vizNodes.push(node);
+                                visualizerEl.appendChild(node);
+                            }
+                        }
+
+                        //parse audio data and change node heights
+                        for (var j = 0; j < audioDataLength; j++) {
+                            node = vizNodes[j];
+
+                            node.style.height = Math.round(audioData[j] * visualizerHeight * modifier) + 'px';
                         }
                     }
+                }, 50);
+            });
 
-                    //parse audio data and change node heights
-                    for (var j = 0; j < audioDataLength; j++) {
-                        node = vizNodes[j];
-
-                        node.style.height = audioData[j] * visualizerHeight;
-                    }
-                }
-            }, 50);
         } else {
             supportedEl.innerHTML = 'This browser doesn\'t support visualizing audio data';
             supportedEl.style.color = 'red';
         }
-
-        //Post comments
-
-            //move paused state from touching the dom
-
     })();
 </script>
 </body>

@@ -5,7 +5,7 @@
   "main": "dist/visualizer-micro.min.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "browserify -t uglifyify visualizer-micro.js -s VisualizerMicro > dist/visualizer-micro.min.js"
+    "build": "browserify src/visualizer-micro.js -s VisualizerMicro > dist/visualizer-micro.js; browserify -t uglifyify src/visualizer-micro.js -s VisualizerMicro > dist/visualizer-micro.min.js"
   },
   "repository": {
     "type": "git",
