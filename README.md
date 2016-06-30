@@ -6,6 +6,10 @@ A JS micro library that simplifies getting Spectrum and Waveform data from an au
 
 Inspired by [Dancer.js](https://github.com/jsantell/dancer.js/), and its `getSpectrum` and `getWaveform` methods.
 
+### Example
+
+An example of basic install and setup can be found [here](http://likethemammal.github.io/visualizer-micro/example.html). The source for the example can be found [here](https://github.com/likethemammal/visualizer-micro/blob/master/example.html)
+
 ## Install
 
 VisualizerMicro supports the UMD, meaning it supports install/usage through CommonJS, AMD, and globals.
@@ -41,7 +45,7 @@ define(['visualizer-micro'], function(VisualizerMicro) {
 
 ## Setup
 
-### Check for browser support
+#### Check for browser support
 
 Before getting any visualization data from the library, browser support should be checked to make sure visualization is possible.
 
@@ -51,7 +55,7 @@ if (vm.isSupported()) {
 }
 ```
 
-### Load an audio source
+#### Load an audio source
 
 The library needs a source to retrieve audio data from. This can be an `<audio>` element **or** an instance of the HTML5 `Audio()` class.
 
@@ -77,7 +81,7 @@ vm.load(audio, onLoad);
 
 `load()` only needs to be called once per audio source. It is not necessary to call it again if `audio.src` is changed.
 
-### Unloading an audio source
+#### Unloading an audio source
 
 When that audio source is no longer needed, call `unload()` **before** the audio source has been destroyed.
 
@@ -90,7 +94,7 @@ vm.unload();
         
 ## Usage
 
-### getSpectrum and getWaveform
+#### getSpectrum and getWaveform
 
 These methods retrieve the actual visualization data from the audio source. They each return arrays. They can be called anytime after an audio source is loaded, but in most use cases they'll only be called if the audio source isn't `paused`. They would also normally only be called inside an animation loop to capture the change in audio data.
 
@@ -109,7 +113,7 @@ if (!audio.paused) {
 }
 ```
     
-### setVolumeModifier
+#### setVolumeModifier
 
 The data retrieved from the Web Audio API is linked to the audio source's volume. This means, to return consistent, normalized data, the library needs to know the audio source's volume at all times. Internally this is represented as the `volumeModifier`.
 
