@@ -1,10 +1,10 @@
 # VisualizerMicro
 
-A JS micro library that simplifies getting spectrum and waveform data from an audio source using the HTML5 Web Audio API.
+A JS micro library that simplifies getting Spectrum and Waveform data from an audio source using the HTML5 Web Audio API.
 
 **(No dependencies, yay!)**
 
-Inspired by [Dancer.js](), and its `getSpectrum` and `getWaveform` methods.
+Inspired by [Dancer.js](https://github.com/jsantell/dancer.js/), and its `getSpectrum` and `getWaveform` methods.
 
 ## Install
 
@@ -60,6 +60,9 @@ The 2nd parameter expected is a callback, to be called after the audio source ha
 ```js
 //audio element
 var audioEl = document.getElementById('some-audio-el');
+var onLoad = function() {
+    //do some after the audio source has be loaded
+};
 
 vm.load(audioEl, onLoad);
 ```
@@ -89,7 +92,7 @@ vm.unload();
 
 ### getSpectrum and getWaveform
 
-These methods retrieve the actual visualization data from the audio source. They each return arrays. They can be called anytime after an audio source is loaded, but in most use cases they'll only be called if the audio source isn't paused. They'll normally also be called inside an animation loop to capture the change in audio data.
+These methods retrieve the actual visualization data from the audio source. They each return arrays. They can be called anytime after an audio source is loaded, but in most use cases they'll only be called if the audio source isn't `paused`. They would also normally only be called inside an animation loop to capture the change in audio data.
 
 ```js
 
@@ -108,9 +111,9 @@ if (!audio.paused) {
     
 ### setVolumeModifier
 
-The data retrieved from the Web Audio API is relevant to the audio source's volume. This means, to return consistent, normalized data, the library needs to know the audio source's volume whenever. Internally this is represented as the `volumeModifier`. 
+The data retrieved from the Web Audio API is linked to the audio source's volume. This means, to return consistent, normalized data, the library needs to know the audio source's volume at all times. Internally this is represented as the `volumeModifier`.
 
-For performance reasons, the volume modifier is only set internally **once** when the audio source is loaded. If the audio source's volume changes, it needs to be reset using `setVolumeModifier()`, which expects a value from 0 to 1.
+For performance reasons, the volume modifier is only set internally **once** when the audio source is loaded. If the audio source's volume changes, it needs to be set in VisualizerMicro using `setVolumeModifier()`, which expects a value from 0 to 1.
 
 ```js
 //on change of the audio source's volume

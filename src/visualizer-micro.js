@@ -34,7 +34,7 @@ var VisualizerMicro;
     };
 
     _warnNotSupported = function () {
-        console.warn(logPrefix + 'Audio visualization is not supported in this browser');
+        console.warn(logPrefix + 'Audio visualization is not supported in this browser.');
     };
 
     _warnAudioLoaded = function () {
@@ -97,7 +97,7 @@ var VisualizerMicro;
     unload = function () {
 
         if (!this.audioSource) {
-            console.log(logPrefix + "Audio source doesn't exist. This may mean it was destoryed prematurely and could cause a memory leak.");
+            console.log(logPrefix + "Audio source doesn't exist. This may mean it was destroyed prematurely and could cause a memory leak.");
         } else {
             this.audioSource.removeEventListener(loadEventString, _onLoad);
         }
