@@ -8,7 +8,7 @@ Inspired by [Dancer.js](https://github.com/jsantell/dancer.js/), and its `getSpe
 
 ### Example
 
-An example of basic install and setup can be found [here](http://likethemammal.github.io/visualizer-micro/example.html). The source for the example can be found [here](https://github.com/likethemammal/visualizer-micro/blob/master/example.html)
+An example of basic install and setup can be found in the [Live Demo](http://likethemammal.github.io/visualizer-micro/example.html). The source for the example can be found [here](https://github.com/likethemammal/visualizer-micro/blob/master/example.html)
 
 ## Install
 
@@ -62,7 +62,7 @@ The library needs a source to retrieve audio data from. This can be an `<audio>`
 The 2nd parameter expected is a callback, to be called after the audio source has been loaded 
 
 ```js
-//audio element
+//<audio> element
 var audioEl = document.getElementById('some-audio-el');
 var onLoad = function() {
     //do some after the audio source has be loaded
@@ -109,7 +109,7 @@ if (!audio.paused) {
     
     var waveform = vm.getWaveform();
     
-    //loop over spectrum and/or waveform array, parsing visualization data..
+    //...loop over spectrum and/or waveform array, parsing visualization data..
 }
 ```
     
