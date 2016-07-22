@@ -79,7 +79,7 @@ var VisualizerMicro;
         this.binCount = this.analyser.frequencyBinCount;
         this.dataArray = new Uint8Array(this.binCount);
 
-        setVolumeModifier(this.audioSource.volume);
+        this.setVolumeModifier(this.audioSource.volume);
 
         this.alreadyLoaded = true;
         this.loadedCallback();
@@ -158,7 +158,7 @@ var VisualizerMicro;
         for (var i = 0; i < spectrumLength; i++) {
             value = this.dataArray[i];
 
-            value = (value / this.volumeModifier) / (this.binCount * 4);
+            value = ((value / this.volumeModifier) / 255);
 
             spectrum.push(value);
         }
@@ -178,7 +178,7 @@ var VisualizerMicro;
             return;
         }
 
-        var spectrum = [],
+        var waveform = [],
             waveformLength,
             value;
 
@@ -192,15 +192,15 @@ var VisualizerMicro;
             value = value - 128;
             value = value / 128;
 
-            spectrum.push(value);
+            waveform.push(value);
         }
 
-        return spectrum;
+        return waveform;
 
     };
 
     setVolumeModifier = function (volume) {
-        this.volumeModifier = (1 / volume);
+        this.volumeModifier = volume;
     };
 
     //set to prototype

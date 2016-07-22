@@ -33,7 +33,7 @@
 <div id="supported"></div>
 
 <p>
-    <button id="switch" disabled>Spectrum</button>
+    <button id="switch" disabled>Waveform</button>
 </p>
 
 <p>
@@ -68,10 +68,10 @@
         switchEl.onclick = function() {
             if (currentVisualizerType === defaultVisualizerType) {
                 currentVisualizerType = 'waveform';
-                switchEl.innerHTML = waveformText;
+                switchEl.innerHTML = spectrumText;
             } else {
                 currentVisualizerType = defaultVisualizerType;
-                switchEl.innerHTML = spectrumText;
+                switchEl.innerHTML = waveformText;
             }
         };
 
@@ -81,6 +81,14 @@
             switchEl.disabled = false;
 
             vm.load(audioEl, function() {
+
+                audioEl.onvolumechange = function () {
+
+                    console.log(audioEl.volume);
+
+                    vm.setVolumeModifier(audioEl.volume);
+                };
+
                 //setup audio data retrieval and animation loop
                 setInterval(function () {
                     if (!audioEl.paused) {
@@ -88,7 +96,7 @@
                         var audioDataLength;
                         var node;
                         var isSpectrum = currentVisualizerType === defaultVisualizerType;
-                        var modifier = isSpectrum ? 16 : 1;
+                        var modifier = isSpectrum ? .25 : 1;
 
                         if (isSpectrum) {
                             audioData = vm.getSpectrum();

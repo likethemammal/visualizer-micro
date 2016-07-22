@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "A JS micro library that simplifies getting spectrum and waveform data from an audio source using the HTML5 Web Audio API.",
   "main": "dist/visualizer-micro.min.js",
+  "files": ["dist/"],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "browserify src/visualizer-micro.js -s VisualizerMicro > dist/visualizer-micro.js; browserify -t uglifyify src/visualizer-micro.js -s VisualizerMicro > dist/visualizer-micro.min.js"
