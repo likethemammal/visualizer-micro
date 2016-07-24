@@ -1,6 +1,6 @@
 {
   "name": "visualizer-micro",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A JS micro library that simplifies getting spectrum and waveform data from an audio source using the HTML5 Web Audio API.",
   "main": "dist/visualizer-micro.min.js",
   "files": [
