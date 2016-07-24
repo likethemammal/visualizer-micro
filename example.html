@@ -82,11 +82,6 @@
 
             vm.load(audioEl, function() {
 
-                audioEl.onvolumechange = function () {
-
-                    vm.setVolumeModifier(audioEl.volume);
-                };
-
                 //setup audio data retrieval and animation loop
                 setInterval(function () {
                     if (!audioEl.paused) {
@@ -94,7 +89,7 @@
                         var audioDataLength;
                         var node;
                         var isSpectrum = currentVisualizerType === defaultVisualizerType;
-                        var modifier = isSpectrum ? .25 : 1;
+                        var modifier = isSpectrum ? 1 : 1;
 
                         if (isSpectrum) {
                             audioData = vm.getSpectrum();

@@ -113,17 +113,19 @@ if (!audio.paused) {
 }
 ```
     
-#### setVolumeModifier
+~~#### setVolumeModifier~~
 
-The data retrieved from the Web Audio API is linked to the audio source's volume. This means, to return consistent, normalized data, the library needs to know the audio source's volume at all times. Internally this is represented as the `volumeModifier`.
+**`setVolumeModifier` is depreciated, all spectrum values must be relative to the audio source's volume.**
 
-For performance reasons, the volume modifier is only set internally **once** when the audio source is loaded. If the audio source's volume changes, it needs to be set in VisualizerMicro using `setVolumeModifier()`, which expects a value from 0 to 1.
+~~The data retrieved from the Web Audio API is linked to the audio source's volume. This means, to return consistent, normalized data, the library needs to know the audio source's volume at all times. Internally this is represented as the `volumeModifier`.~~
+
+~~For performance reasons, the volume modifier is only set internally **once** when the audio source is loaded. If the audio source's volume changes, it needs to be set in VisualizerMicro using `setVolumeModifier()`, which expects a value from 0 to 1.~~
 
 ```js
-//on change of the audio source's volume
+~~//on change of the audio source's volume~~
 
-var newVolume = audioEl.volume;
+~~var newVolume = audioEl.volume;~~
 
-vm.setVolumeModifier(newVolume);
+~~vm.setVolumeModifier(newVolume);~~
 
 ```

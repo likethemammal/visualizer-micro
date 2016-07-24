@@ -29,6 +29,8 @@ var VisualizerMicro;
     var AudioContext = window.AudioContext || window.webkitAudioContext,
         _warnNotSupported,
         _warnAudioLoaded,
+        _volumeToDB,
+        _dbToVolume,
         _onLoad,
         load,
         unload,
@@ -54,7 +56,6 @@ var VisualizerMicro;
         this.loadedCallback = false;
         this.audioSource = false;
         this.dataArray = [];
-        this.volumeModifier = 1;
     };
 
     _warnNotSupported = function () {
@@ -78,8 +79,6 @@ var VisualizerMicro;
         this.analyser.connect(this.context.destination);
         this.binCount = this.analyser.frequencyBinCount;
         this.dataArray = new Uint8Array(this.binCount);
-
-        this.setVolumeModifier(this.audioSource.volume);
 
         this.alreadyLoaded = true;
         this.loadedCallback();
@@ -149,18 +148,19 @@ var VisualizerMicro;
 
         var spectrum = [],
             spectrumLength,
-            value;
+            minDecibels = this.analyser.minDecibels,
+            maxDecibels = this.analyser.maxDecibels,
+            s = 255 / (maxDecibels - minDecibels),
+            dbValue;
 
         this.analyser.getByteFrequencyData(this.dataArray);
 
         spectrumLength = this.dataArray.length;
 
         for (var i = 0; i < spectrumLength; i++) {
-            value = this.dataArray[i];
+            dbValue = this.dataArray[i];
 
-            value = ((value / this.volumeModifier) / 255);
-
-            spectrum.push(value);
+            spectrum.push(dbValue / 255);
         }
 
         return spectrum;
@@ -200,7 +200,15 @@ var VisualizerMicro;
     };
 
     setVolumeModifier = function (volume) {
-        this.volumeModifier = volume;
+        console.warn(logPrefix + 'Setting the volume modifier is depreciated, all spectrum values must be reletive to volume.');
+    };
+
+    _volumeToDB = function (volume) {
+        return (Math.log(volume)/Math.LN10)*20;
+    };
+
+    _dbToVolume = function (db) {
+        return (Math.pow(10,(db/20)));
     };
 
     //set to prototype
