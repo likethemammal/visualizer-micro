@@ -104,7 +104,7 @@ var VisualizerMicro;
         }
 
         if (this.loadEventListenerCreated && this.alreadyLoaded) {
-            //remove old audio source so new one can be attached
+            // remove old audio source so new one can be attached
             unload();
         }
 
@@ -204,15 +204,7 @@ var VisualizerMicro;
     };
 
     setVolumeModifier = function (volume) {
-        console.warn(logPrefix + 'Setting the volume modifier is depreciated, all spectrum values must be reletive to volume.');
-    };
-
-    _volumeToDB = function (volume) {
-        return (Math.log(volume)/Math.LN10)*20;
-    };
-
-    _dbToVolume = function (db) {
-        return (Math.pow(10,(db/20)));
+        console.warn(logPrefix + 'Setting the volume modifier is depreciated, all spectrum values must be relative to volume from the audio source.');
     };
 
     //set to prototype

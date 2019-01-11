@@ -1,7 +1,7 @@
 {
   "name": "visualizer-micro",
-  "version": "0.0.3",
-  "description": "A JS micro library that simplifies getting spectrum and waveform data from an audio source using the HTML5 Web Audio API.",
+  "version": "0.1.0",
+  "description": "A JS micro library for creating audio visualizers",
   "main": "dist/visualizer-micro.min.js",
   "files": [
     "dist/"
@@ -15,9 +15,12 @@
     "url": "https://github.com/likethemammal/visualizer-micro.git"
   },
   "keywords": [
+    "waveform",
+    "spectrum",
     "visualizer",
     "audio visualizer",
     "html5 visualizer",
+    "html5 audio",
     "web audio api",
     "dancer.js",
     "micro"

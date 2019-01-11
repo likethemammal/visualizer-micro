@@ -1,81 +1,75 @@
-# VisualizerMicro
+# visualizer-micro
 
-A JS micro library that simplifies getting Spectrum and Waveform data from an audio source using the HTML5 Web Audio API.
+A JS micro library for creating audio visualizers.
 
-**(No dependencies, yay!)**
+Simplifies the use of the HTML5 Web Audio API for retrieving Spectrum and Waveform data from an audio source. 
 
-Inspired by [Dancer.js](https://github.com/jsantell/dancer.js/), and its `getSpectrum` and `getWaveform` methods.
+**zero dependencies**
 
-### Example
+Inspired by [Dancer.js](https://github.com/jsantell/dancer.js/), and the `getSpectrum` and `getWaveform` methods.
 
-An example of basic install and setup can be found in the [Live Demo](http://likethemammal.github.io/visualizer-micro/example.html). The source for the example can be found [here](https://github.com/likethemammal/visualizer-micro/blob/master/example.html)
+## Example / Demo
+
+An example of basic install and setup can be found [in the source](https://github.com/likethemammal/visualizer-micro/blob/master/example.html) of the [Live Demo](http://likethemammal.github.io/visualizer-micro/example.html).
 
 ## Install
 
-VisualizerMicro supports the UMD, meaning it supports install/usage through CommonJS, AMD, and globals.
+visualizer-micro supports the UMD, meaning it supports install/usage through ES6 modules, CommonJS, AMD, and script tag globals.
 
-##### CommonJS
-
-```js
-
-var VisualizerMicro = require('visualizer-micro');
-var vm = new VisualizerMicro();
+Check out the `dist/` directory for the [minified](dist/visualizer-micro.min.js) and [unminified](dist/visualizer-micro.js) production scripts.
 
 ```
-
-##### AMD
-
-```js
-define(['visualizer-micro'], function(VisualizerMicro) {
-	var vm = new VisualizerMicro();
-});
-
-```
-
-##### Globals
-
-```html
-
-<script src="/js/libs/visualizer-micro.js"></script>
-<script>
-	var vm = new VisualizerMicro();
-</script>
-
+npm install -d visualizer-micro
 ```
 
 ## Setup
 
+```
+
+import VisualizerMicro from 'visualizer-micro'
+
+var vm = new VisualizerMicro()
+
+```
+
 #### Check for browser support
 
-Before getting any visualization data from the library, browser support should be checked to make sure visualization is possible.
+Before getting any visualization data, check for browser support to make sure visualization is possible.
 
 ```js
+
 if (vm.isSupported()) {
-    //load audio and get visualizer data
+    // load audio and get visualizer data
 }
+
 ```
 
 #### Load an audio source
 
-The library needs a source to retrieve audio data from. This can be an `<audio>` element **or** an instance of the HTML5 `Audio()` class.
+**Before you can call load(), the user has to click something**. Read more about why [here](https://developers.google.com/web/updates/2017/09/autoplay-policy-changes).
 
-The 2nd parameter expected is a callback, to be called after the audio source has been loaded 
+First parameter is the source for audio data. This can be an `<audio>` element **or** an instance of the HTML5 `Audio()` class.
+
+Second parameter is a callback, that will be called once the audio source has been loaded for visualization.
 
 ```js
-//<audio> element
-var audioEl = document.getElementById('some-audio-el');
-var onLoad = function() {
-    //do some after the audio source has be loaded
-};
 
-vm.load(audioEl, onLoad);
+// <audio> element
+var audioEl = document.getElementById('some-audio-el')
+var onLoad = function() {
+    // do something after the audio source has be loaded
+}
+
+vm.load(audioEl, onLoad)
+
 ```
 
 ```js
-//Audio class
-var audio = new Audio();
 
-vm.load(audio, onLoad);
+// Audio class
+var audio = new Audio()
+
+vm.load(audio, onLoad)
 
 ```
 
@@ -83,10 +77,11 @@ vm.load(audio, onLoad);
 
 #### Unloading an audio source
 
-When that audio source is no longer needed, call `unload()` **before** the audio source has been destroyed.
+When the audio source is no longer needed, call `unload()` **before** the audio source has been destroyed/remove/collected.
 
 ```js
-//before deleting or garbage collecting audio source
+
+// before deleting or garbage collecting audio source
 
 vm.unload();
 
@@ -96,36 +91,20 @@ vm.unload();
 
 #### getSpectrum and getWaveform
 
-These methods retrieve the actual visualization data from the audio source. They each return arrays. They can be called anytime after an audio source is loaded, but in most use cases they'll only be called if the audio source isn't `paused`. They would also normally only be called inside an animation loop to capture the change in audio data.
+These methods retrieve the actual visualization data from the audio source. They each return arrays of numbers. They can be called anytime after an audio source is loaded, but in most cases they'll only be called if the audio source isn't `paused`. Generally they're only called inside an animation loop to capture the **change** in audio data.
 
 ```js
 
-//inside an animation loop..
+// inside an animation loop..
 
 if (!audio.paused) {
     var spectrum = vm.getSpectrum();
     
-    //and/or
+    // and/or
     
     var waveform = vm.getWaveform();
     
-    //...loop over spectrum and/or waveform array, parsing visualization data..
+    // ...loop over spectrum and/or waveform array, parsing visualization numbers..
 }
-```
-    
-~~#### setVolumeModifier~~
-
-**`setVolumeModifier` is depreciated, all spectrum values must be relative to the audio source's volume.**
-
-~~The data retrieved from the Web Audio API is linked to the audio source's volume. This means, to return consistent, normalized data, the library needs to know the audio source's volume at all times. Internally this is represented as the `volumeModifier`.~~
-
-~~For performance reasons, the volume modifier is only set internally **once** when the audio source is loaded. If the audio source's volume changes, it needs to be set in VisualizerMicro using `setVolumeModifier()`, which expects a value from 0 to 1.~~
-
-```js
-~~//on change of the audio source's volume~~
-
-~~var newVolume = audioEl.volume;~~
-
-~~vm.setVolumeModifier(newVolume);~~
 
 ```

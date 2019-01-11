@@ -40,7 +40,7 @@ var VisualizerMicro;
         getWaveform,
         setVolumeModifier,
         logPrefix = 'VisualizerMicro: ',
-        loadEventString = 'canplaythrough',
+        loadEventString = 'canplay',
         prototype;
 
     VisualizerMicro = function () {
@@ -50,8 +50,6 @@ var VisualizerMicro;
         }
 
         this.alreadyLoaded = false;
-        this.context = new AudioContext();
-        this.analyser = this.context.createAnalyser();
         this.binCount = false;
         this.loadEventListenerCreated = false;
         this.loadedCallback = false;
@@ -72,7 +70,6 @@ var VisualizerMicro;
         if (this.alreadyLoaded) {
             return;
         }
-
         var source = this.context.createMediaElementSource(this.audioSource);
 
         source.connect(this.analyser);
@@ -108,14 +105,21 @@ var VisualizerMicro;
         }
 
         if (this.loadEventListenerCreated && this.alreadyLoaded) {
-            //remove old audio source so new one can be attached
+            // remove old audio source so new one can be attached
             unload();
         }
 
+        this.context = new AudioContext();
+        this.analyser = this.context.createAnalyser();
         this.audioSource = audio;
         this.loadEventListenerCreated = true;
         this.loadedCallback = callback;
-        this.audioSource.addEventListener(loadEventString, _onLoad.bind(this))
+
+        if (audio.readyState === 3 || audio.readyState === 4) {
+          this._onLoad()
+        } else {
+          this.audioSource.addEventListener(loadEventString, _onLoad.bind(this))
+        }
     };
 
     unload = function () {
@@ -201,15 +205,7 @@ var VisualizerMicro;
     };
 
     setVolumeModifier = function (volume) {
-        console.warn(logPrefix + 'Setting the volume modifier is depreciated, all spectrum values must be reletive to volume.');
-    };
-
-    _volumeToDB = function (volume) {
-        return (Math.log(volume)/Math.LN10)*20;
-    };
-
-    _dbToVolume = function (db) {
-        return (Math.pow(10,(db/20)));
+        console.warn(logPrefix + 'Setting the volume modifier is depreciated, all spectrum values must be relative to volume from the audio source.');
     };
 
     //set to prototype
@@ -225,5 +221,6 @@ var VisualizerMicro;
 })();
 
 module.exports = VisualizerMicro;
+
 },{}]},{},[1])(1)
 });

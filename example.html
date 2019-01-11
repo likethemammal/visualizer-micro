@@ -33,15 +33,29 @@
 <div id="supported"></div>
 
 <p>
-    <button id="switch" disabled>Waveform</button>
-</p>
-
-<p>
-    <button id="play" disabled>Play</button>
+    <div>Because of <a href="https://developers.google.com/web/updates/2017/09/autoplay-policy-changes">big changes to how browsers handle autoplay</a>,</div>
+    <div>the user must trigger an event directly to allow visualization to work.</div>
+    <p>
+        <em>Clicking the "Load Visualizer" button is required</em>
+    </p>
+    <p>
+        <button id="load" disabled>Load Visualizer</button>
+    </p>
 </p>
 
 <p>
     <audio id="audio" src="sample.mp3" controls></audio>
+</p>
+
+<br/>
+<br/>
+<br/>
+
+<p>
+    <p>
+        <em>Visualizer Type Switch:</em>
+    </p>
+    <button id="switch" disabled>Waveform</button>
 </p>
 
 <p>
@@ -53,90 +67,91 @@
 
 <script>
 
-        var vm = new VisualizerMicro();
-        var supportedEl = document.getElementById('supported');
-        var audioEl = document.getElementById('audio');
-        var switchEl = document.getElementById('switch');
-        var playEl = document.getElementById('play');
-        var visualizerEl = document.getElementById('visualizer');
-        var spectrumText = 'Spectrum';
-        var waveformText = 'Waveform';
-        var defaultVisualizerType = 'spectrum';
-        var currentVisualizerType = defaultVisualizerType;
-        var visualizerHeight = visualizerEl.clientHeight;
-        var vizNodes = [];
+    var vm = new VisualizerMicro();
+    var supportedEl = document.getElementById('supported');
+    var audioEl = document.getElementById('audio');
+    var switchEl = document.getElementById('switch');
+    var loadEl = document.getElementById('load');
+    var visualizerEl = document.getElementById('visualizer');
+    var spectrumText = 'Spectrum';
+    var waveformText = 'Waveform';
+    var defaultVisualizerType = 'spectrum';
+    var currentVisualizerType = defaultVisualizerType;
+    var visualizerHeight = visualizerEl.clientHeight;
+    var vizEls = [];
 
-        audioEl.volume = 0.4;
+    audioEl.volume = 0.4;
 
-        //setup switch button
-        switchEl.onclick = function() {
-            if (currentVisualizerType === defaultVisualizerType) {
-                currentVisualizerType = 'waveform';
-                switchEl.innerHTML = spectrumText;
-            } else {
-                currentVisualizerType = defaultVisualizerType;
-                switchEl.innerHTML = waveformText;
-            }
-        };
-
-        if (vm.isSupported()) {
-            supportedEl.innerHTML = 'This browser supports visualizing audio data';
-            supportedEl.style.color = 'green';
-            switchEl.disabled = false;
-
-            playEl.disabled = false
-            playEl.onclick = load
-
+    // setup visualizer type switch button
+    switchEl.onclick = function() {
+        if (currentVisualizerType === defaultVisualizerType) {
+            currentVisualizerType = 'waveform';
+            switchEl.innerHTML = spectrumText;
         } else {
-            supportedEl.innerHTML = 'This browser doesn\'t support visualizing audio data';
-            supportedEl.style.color = 'red';
+            currentVisualizerType = defaultVisualizerType;
+            switchEl.innerHTML = waveformText;
         }
+    };
 
-        function load(){
-          vm.load(audioEl, function() {
+    // toggle UI to show browser support
+    if (vm.isSupported()) {
+        supportedEl.innerHTML = 'This browser supports visualizing audio data';
+        supportedEl.style.color = 'green';
 
-            console.log("butts")
+        switchEl.disabled = false;
 
-              //setup audio data retrieval and animation loop
-              setInterval(function () {
-                  if (!audioEl.paused) {
-                      var audioData;
-                      var audioDataLength;
-                      var node;
-                      var isSpectrum = currentVisualizerType === defaultVisualizerType;
-                      var modifier = isSpectrum ? 1 : 1;
+        loadEl.disabled = false
 
-                      if (isSpectrum) {
-                          audioData = vm.getSpectrum();
-                      } else {
-                          audioData = vm.getWaveform();
-                      }
+        // an event like this click is required for the browser to allow visualization
+        loadEl.onclick = load;
 
-                      audioDataLength = audioData.length;
+    } else {
+        supportedEl.innerHTML = 'This browser doesn\'t support visualizing audio data';
+        supportedEl.style.color = 'red';
+    }
 
-                      //create visualizer nodes
-                      if (!vizNodes.length) {
-                          for (var i = 0; i < audioDataLength; i++) {
-                              node = document.createElement('div');
+    function load(){
+        vm.load(audioEl, function() {
 
-                              node.className = 'visualizer-node';
-                              node.style.left = i + 'px';
+            // setup audio data retrieval and animation loop
+            setInterval(function () {
+                if (audioEl.paused) {
+                    return
+                }
 
-                              vizNodes.push(node);
-                              visualizerEl.appendChild(node);
-                          }
-                      }
+                var div;
+                var divHeight;
+                var isSpectrum = currentVisualizerType === defaultVisualizerType;
 
-                      //parse audio data and change node heights
-                      for (var j = 0; j < audioDataLength; j++) {
-                          node = vizNodes[j];
+                // get audio data for this moment
+                var audioData = isSpectrum ? vm.getSpectrum() : vm.getWaveform();
+                var audioDataLength = audioData.length;
 
-                          node.style.height = Math.round(audioData[j] * visualizerHeight * modifier) + 'px';
-                      }
-                  }
-              }, 50);
-          });
-        }
+                // create visualizer nodes
+                if (!vizEls.length) {
+                    for (var i = 0; i < audioDataLength; i++) {
+                        div = document.createElement('div');
+
+                        div.className = 'visualizer-node';
+                        div.style.left = i + 'px';
+
+                        vizEls.push(div);
+                        visualizerEl.appendChild(div);
+                    }
+                }
+
+                // parse audio data and change div heights
+                for (var j = 0; j < audioDataLength; j++) {
+                    div = vizEls[j];
+
+                    divHeight = Math.round(audioData[j] * visualizerHeight)
+
+                    div.style.height = divHeight + 'px';
+                }
+
+            }, 50);
+        });
+    }
 
 </script>
 </body>
