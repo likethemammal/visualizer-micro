@@ -1,10 +1,11 @@
 # visualizer-micro
 
+**zero dependencies**
+
 A JS micro library for creating audio visualizers.
 
-Simplifies the use of the HTML5 Web Audio API for retrieving Spectrum and Waveform data from an audio source. 
+Simplifies the use of the HTML5 Web Audio API for retrieving audio data from an audio source. 
 
-**zero dependencies**
 
 Inspired by [Dancer.js](https://github.com/jsantell/dancer.js/), and the `getSpectrum` and `getWaveform` methods.
 
@@ -25,14 +26,12 @@ npm install -d visualizer-micro
 ## Setup
 
 ```
-
 import VisualizerMicro from 'visualizer-micro'
 
 var vm = new VisualizerMicro()
-
 ```
 
-#### Check for browser support
+### Check for browser support
 
 Before getting any visualization data, check for browser support to make sure visualization is possible.
 
@@ -44,7 +43,7 @@ if (vm.isSupported()) {
 
 ```
 
-#### Load an audio source
+### Load an audio source
 
 **Before you can call load(), the user has to click something**. Read more about why [here](https://developers.google.com/web/updates/2017/09/autoplay-policy-changes).
 
@@ -75,7 +74,7 @@ vm.load(audio, onLoad)
 
 `load()` only needs to be called once per audio source. It is not necessary to call it again if `audio.src` is changed.
 
-#### Unloading an audio source
+### Unloading an audio source
 
 When the audio source is no longer needed, call `unload()` **before** the audio source has been destroyed/remove/collected.
 
@@ -89,7 +88,7 @@ vm.unload();
         
 ## Usage
 
-#### getSpectrum and getWaveform
+### getSpectrum and getWaveform
 
 These methods retrieve the actual visualization data from the audio source. They each return arrays of numbers. They can be called anytime after an audio source is loaded, but in most cases they'll only be called if the audio source isn't `paused`. Generally they're only called inside an animation loop to capture the **change** in audio data.
 
