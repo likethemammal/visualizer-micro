@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>VisualizerMicro - Example usage page</title>
 
     <style>
@@ -37,7 +37,11 @@
 </p>
 
 <p>
-    <audio id="audio" src="sample.mp3" controls autoplay></audio>
+    <button id="play" disabled>Play</button>
+</p>
+
+<p>
+    <audio id="audio" src="sample.mp3" controls></audio>
 </p>
 
 <p>
@@ -48,12 +52,12 @@
 <script src="dist/visualizer-micro.js"></script>
 
 <script>
-    (function() {
 
         var vm = new VisualizerMicro();
         var supportedEl = document.getElementById('supported');
         var audioEl = document.getElementById('audio');
         var switchEl = document.getElementById('switch');
+        var playEl = document.getElementById('play');
         var visualizerEl = document.getElementById('visualizer');
         var spectrumText = 'Spectrum';
         var waveformText = 'Waveform';
@@ -80,53 +84,60 @@
             supportedEl.style.color = 'green';
             switchEl.disabled = false;
 
-            vm.load(audioEl, function() {
-
-                //setup audio data retrieval and animation loop
-                setInterval(function () {
-                    if (!audioEl.paused) {
-                        var audioData;
-                        var audioDataLength;
-                        var node;
-                        var isSpectrum = currentVisualizerType === defaultVisualizerType;
-                        var modifier = isSpectrum ? 1 : 1;
-
-                        if (isSpectrum) {
-                            audioData = vm.getSpectrum();
-                        } else {
-                            audioData = vm.getWaveform();
-                        }
-
-                        audioDataLength = audioData.length;
-
-                        //create visualizer nodes
-                        if (!vizNodes.length) {
-                            for (var i = 0; i < audioDataLength; i++) {
-                                node = document.createElement('div');
-
-                                node.className = 'visualizer-node';
-                                node.style.left = i + 'px';
-
-                                vizNodes.push(node);
-                                visualizerEl.appendChild(node);
-                            }
-                        }
-
-                        //parse audio data and change node heights
-                        for (var j = 0; j < audioDataLength; j++) {
-                            node = vizNodes[j];
-
-                            node.style.height = Math.round(audioData[j] * visualizerHeight * modifier) + 'px';
-                        }
-                    }
-                }, 50);
-            });
+            playEl.disabled = false
+            playEl.onclick = load
 
         } else {
             supportedEl.innerHTML = 'This browser doesn\'t support visualizing audio data';
             supportedEl.style.color = 'red';
         }
-    })();
+
+        function load(){
+          vm.load(audioEl, function() {
+
+            console.log("butts")
+
+              //setup audio data retrieval and animation loop
+              setInterval(function () {
+                  if (!audioEl.paused) {
+                      var audioData;
+                      var audioDataLength;
+                      var node;
+                      var isSpectrum = currentVisualizerType === defaultVisualizerType;
+                      var modifier = isSpectrum ? 1 : 1;
+
+                      if (isSpectrum) {
+                          audioData = vm.getSpectrum();
+                      } else {
+                          audioData = vm.getWaveform();
+                      }
+
+                      audioDataLength = audioData.length;
+
+                      //create visualizer nodes
+                      if (!vizNodes.length) {
+                          for (var i = 0; i < audioDataLength; i++) {
+                              node = document.createElement('div');
+
+                              node.className = 'visualizer-node';
+                              node.style.left = i + 'px';
+
+                              vizNodes.push(node);
+                              visualizerEl.appendChild(node);
+                          }
+                      }
+
+                      //parse audio data and change node heights
+                      for (var j = 0; j < audioDataLength; j++) {
+                          node = vizNodes[j];
+
+                          node.style.height = Math.round(audioData[j] * visualizerHeight * modifier) + 'px';
+                      }
+                  }
+              }, 50);
+          });
+        }
+
 </script>
 </body>
 </html>

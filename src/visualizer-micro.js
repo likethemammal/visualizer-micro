@@ -39,7 +39,7 @@ var VisualizerMicro;
         getWaveform,
         setVolumeModifier,
         logPrefix = 'VisualizerMicro: ',
-        loadEventString = 'canplaythrough',
+        loadEventString = 'canplay',
         prototype;
 
     VisualizerMicro = function () {
@@ -49,8 +49,6 @@ var VisualizerMicro;
         }
 
         this.alreadyLoaded = false;
-        this.context = new AudioContext();
-        this.analyser = this.context.createAnalyser();
         this.binCount = false;
         this.loadEventListenerCreated = false;
         this.loadedCallback = false;
@@ -71,7 +69,6 @@ var VisualizerMicro;
         if (this.alreadyLoaded) {
             return;
         }
-
         var source = this.context.createMediaElementSource(this.audioSource);
 
         source.connect(this.analyser);
@@ -111,10 +108,17 @@ var VisualizerMicro;
             unload();
         }
 
+        this.context = new AudioContext();
+        this.analyser = this.context.createAnalyser();
         this.audioSource = audio;
         this.loadEventListenerCreated = true;
         this.loadedCallback = callback;
-        this.audioSource.addEventListener(loadEventString, _onLoad.bind(this))
+
+        if (audio.readyState === 3 || audio.readyState === 4) {
+          this._onLoad()
+        } else {
+          this.audioSource.addEventListener(loadEventString, _onLoad.bind(this))
+        }
     };
 
     unload = function () {
