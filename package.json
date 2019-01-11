@@ -32,7 +32,7 @@
   },
   "homepage": "https://github.com/likethemammal/visualizer-micro",
   "devDependencies": {
-    "browserify": "^10.2.4",
-    "uglifyify": "^3.0.1"
+    "browserify": "^10.2.6",
+    "uglifyify": "^3.0.4"
   }
 }
